@@ -1,0 +1,275 @@
+/*****************************************************************************/
+/*
+/* Common
+/*
+/*****************************************************************************/
+
+/* Global Reset */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html, body { height: 100%; }
+
+body {
+  background-color: #FFF;
+  font-family: georgia;
+  text-align: left;
+  color: #444;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Helvetica Neue", arial, helvetica, sans-serif; 
+}
+
+h1 {
+    line-height: 1;
+    letter-spacing: -1px;
+    font-size: 250%;
+    font-weight: bolder;
+}
+h2 { font-size: 120%; } 
+ 
+h1 { margin-bottom: 1em; }
+p { margin: 1em 0; }
+
+a         { color: #00a; }
+a:hover   { color: #000; }
+a:visited { color: #a0a; }
+
+table {
+  font-size: inherit;
+  font: 100%;
+}
+
+/*****************************************************************************/
+/*
+/* Home
+/*
+/*****************************************************************************/
+ul.posts {
+  list-style-type: none;
+  margin-bottom: 2em;
+}
+
+ul.posts li {
+  line-height: 1.2;
+  margin-bottom: 1.2em;
+}
+
+ul.posts span {
+  color: #aaa;
+  font-size: 80%;
+}
+
+
+.col-left {
+  width: 60%;
+  float:left;
+  margin-bottom: 2em;
+}
+
+.col-right {
+  width: 30%;
+  float: right;
+  margin-bottom: 2em;
+}
+
+dl.current-projects {
+  font-size: 87%;
+  padding-left: 2em;
+}
+
+.current-projects dt {
+  font-weight: bold;
+}
+.current-projects dd {
+  margin-bottom: 1em;
+}
+/*****************************************************************************/
+/*
+/* Site
+/*
+/*****************************************************************************/
+
+.site {
+  font-size: 115%;
+  width: 45em;
+  margin: 3em auto 2em;
+  line-height: 1.5em;
+}
+
+.main {
+    width: 30em;
+    float: right;
+}
+
+.site .header {
+  margin-bottom: 2em;
+  float: left;
+  width: 14em;
+  font-style: italic;
+  font-size: 80%;
+  color: #999;
+}
+.site .header .extra {
+    display: block;
+    line-height: 1.2;
+}
+
+.site .header a {
+  text-decoration: none;
+}
+
+.site .header .title {
+  display: block;
+  font-style: normal;
+  font-weight: bold;
+  margin-bottom: .5em;
+  margin-right: 1em;
+  font-size: 110%;
+}
+
+.site .header .title a {
+  color: #e44;
+}
+
+.site .header .title a:hover {
+  color: #e44;
+}
+
+.site .header a.extra {
+  color: #aaa;
+}
+
+.site .header a.extra:hover {
+  color: #000;
+}
+
+.site .header nav {
+    margin-top: 3em;
+    font-style: normal;
+    font-weight: normal;
+    font-family: "Helvetica Neue", arial, helvetica, sans-serif;
+}
+
+.site .header nav a:link,
+.site .header nav a:visited {
+    color: #999;
+}
+
+.site .meta {
+  color: #aaa;
+  margin-top: 0.4em;
+}
+
+.site .footer {
+  width: 30em;
+  float: right;
+  color: #666;
+  border-top: 4px solid #eee;
+  margin-top: 2em;
+  overflow: hidden;
+  clear: both;
+}
+
+.site .footer > * {
+  font-size: 80%;
+}
+
+.site .footer .contact {
+  float: left;
+  margin-right: 3em;
+}
+
+.site .footer .contact a {
+  color: #8085C1;
+}
+
+.site .footer .rss {
+  margin-top: 1.1em;
+  margin-right: -.2em;
+  float: right;
+}
+
+.site .footer .rss img {
+  border: 0;
+}
+
+/*****************************************************************************/
+/*
+/* Posts
+/*
+/*****************************************************************************/
+
+.pre-header {
+    color: #999;
+}
+
+blockquote.teaser {
+    font-style: italic;
+    margin-top: 2em;
+    margin-bottom: 2em;
+}
+
+blockquote.teaser cite {
+    display: block;
+    margin-top: 0.5em;
+    font-style: normal;
+    font-weight: bold;
+    font-family: "Helvetica Neue", arial, helvetica, sans-serif;
+    font-size: 80%;
+    padding-left: 2em;
+    line-height: 1.2;
+}
+
+ol li { margin-bottom: 1em;}
+
+/* standard */
+#post pre {
+  border: 1px solid #ddd;
+  background-color: #eef;
+  padding: 0 .4em;
+}
+
+.abstract {
+  font-size: 108%;
+  line-height: 1.5;
+  width: 30em;
+}
+
+#post ul, #post ol {
+  margin-left: 1.35em;
+}
+
+#post code {
+  border: 1px solid #ddd;
+  background-color: #eef;
+  padding: 0 .2em;
+}
+
+#post pre code {
+  border: none;
+}
+
+/* terminal */
+#post pre.terminal {
+  border: 1px solid #000;
+  background-color: #333;
+  color: #FFF;
+}
+
+#post pre.terminal code {
+  background-color: #333;
+}
+
+blockquote {
+    padding-left: 2em;
+}
+
+hr {
+    background-color: transparent;
+    border-color: transparent;
+    border-bottom: 2px solid #eee;
+}

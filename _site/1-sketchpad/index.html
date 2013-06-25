@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Sketchpad</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="container">
+          <div class="site">
+            <div class="header">
+              <h2 class="title"><a href="/">Deep Interfaces</a></h2>
+              <span class="extra">
+                Exploring the history and future of user interface programming
+              </span>
+							
+							<nav>
+							<ol>
+								<li><a href="/1-sketchpad/">Sketchpad</a></li>
+							</ol>
+							</nav>
+            </div>
+
+						<div class="main">
+                <h2 class='pre-header'>Part I</h2><h1>Sketchpad: the first graphical user interface</h1><blockquote class='teaser'>
+	Sketchpad encountered a critical challenge that remains central to human-
+	computer interaction. Sutherland's original aim was to make computers accessible to new classes of user (artists and draughtsmen among others), while
+	retaining the powers of abstraction that are critical to programmers. ...
+	Sutherland's attempt to
+	remove the division between users and programmers was not the only system that, 
+	in failing to do so, provided the imaginative leap to a new programming paradigm.
+	<cite>Alan Blackwell and Kerry Rodden, in the preface to the the <a href='http://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-574.pdf'>2003 republication</a> of Sutherland's thesis.</cite>
+</blockquote><p>Ivan Sutherland's Sketchpad was the first graphical user interface.
+	With Sketchpad, a user could directly manipulate points, lines and circles
+	to lay out a geometric construction, a circuit, or a two-dimensional bridge truss.
+	Once the picture was close to the correct shape, the user could begin to apply
+	mathematical constraints, commanding two lines to be parallel, or a text label 
+	to take on the value of the radius of a circle. The Sketchpad system would then
+	maintain these constraints dynamically, even as the user made manual adjustments.</p><p>Alan Kay's narration of one of the only surviving videos of Sketchpad in use 
+	highlights both the extremely primitive state of computer hardware used and 
+	the incredible power of its interface:</p><iframe allowfullscreen='allowfullscreen' frameborder='0' height='480' src='http://www.youtube.com/embed/mOZqRJzE8xg' style='margin-bottom:30px;' width='640'>&nbsp;</iframe><h2>Lessons from Sketchpad</h2><p>Besides its historical interest as the first GUI, Sketchpad
+	also demonstrates several important techniques for building powerful interfaces:</p><ol>
+	<li><strong>Generic operations</strong>: though object-oriented programming did not yet
+		exist, Sutherland created a similar system in which the same operation could be applied
+		to different types of data, without respect to the specific type of the piece of data.
+		Many algorithms were greatly simplified by being able to call a generic operation and
+		have the concrete steps performed dispatch on the type of the data.</li>
+	<li><strong>Constraint satisfaction</strong>: when users can describe the properties they want
+		to hold, rather than construct the solution themselves, the computer can use its computational
+		power to allow the user to focus on the larger picture.</li>
+	<li><strong>Prototypical inheritance</strong>: after creating a drawing, users could import
+		it whole into another drawing. The copied drawing could include complex constraints and 
+		join-points to allow it to connect to other drawings. Changes in the first drawing would then 
+		immediately propagate to all of its uses elsewhere.</li>
+</ol><h2>Recreating Sketchpad</h2>
+						</div>
+						
+            <div class="footer">
+              <div class="contact">
+                <p>
+                  <a href="http://adamsolove.com">Adam Solove</a><br />
+                  <a href="mailto:asolove@gmail.com">asolove@gmail.com</a>
+                </p>
+              </div>
+              <div class="contact">
+                <p>
+                  <a href="http://github.com/asolove/">github.com/asolove</a><br />
+                  <a href="http://twitter.com/asolove/">twitter.com/asolove</a><br />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /container -->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-40894369-1', 'adamsolove.com');
+          ga('send', 'pageview');
+        </script>
+    </body>
+</html>
