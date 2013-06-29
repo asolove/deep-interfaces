@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Generic operations</title>
+        <meta name="viewport" content="width=device-width">
+
+        <!-- syntax highlighting CSS -->
+        <link rel="stylesheet" href="/css/syntax.css">
+
+        <!-- Custom CSS -->
+        <link rel="stylesheet" href="/css/main.css">
+
+    </head>
+    <body>
+
+        <div class="container">
+          <div class="site">
+            <div class="header">
+              <h2 class="title"><a href="/">Deep Interfaces</a></h2>
+              <span class="extra">
+                Exploring the history and future of user interface programming
+              </span>
+							
+							<nav>
+							<ol>
+								<li><a href="/1-sketchpad/">Sketchpad</a></li>
+							</ol>
+							</nav>
+            </div>
+
+						<div class="main">
+                <h2 class='pre-header'>Part I: Sketchpad</h2>
+<h1 id='generic_operations_for_sketchpads_view_layer'>Generic operations for Sketchpad&#8217;s view layer</h1>
+
+<p>Our first goal is to create a simple version of Sketchpad&#8217;s view layer so that we can draw shapes and interact with them. This interface will help us understand and debug the underlying logic of constraint satisfaction and instance-creation.</p>
+
+<h3 id='data_types'>Data types</h3>
+
+<p>Our version of Sketchpad will start out with only a few data types: points, line segments, and circles. A point is defined by its x and y coordinates. Lines and circles are each defined by two points. We can define appropriate records for each type:</p>
+<div class='highlight'><pre><code class='clojure'><span class='p'>(</span><span class='kd'>ns </span><span class='nv'>sketchpad.shapes</span><span class='p'>)</span>
+
+<span class='p'>(</span><span class='kd'>defrecord </span><span class='nv'>Point</span> <span class='p'>[</span><span class='nv'>x</span> <span class='nv'>y</span><span class='p'>])</span>
+<span class='p'>(</span><span class='kd'>defrecord </span><span class='nv'>Line</span> <span class='p'>[</span><span class='nv'>p1</span> <span class='nv'>p2</span><span class='p'>])</span>
+<span class='p'>(</span><span class='kd'>defrecord </span><span class='nv'>Circle</span> <span class='p'>[</span><span class='nv'>center</span> <span class='nv'>p2</span><span class='p'>])</span>
+</code></pre></div>
+<p>In the initial version of Sketchpad, the lines and circles had<br /> pointers to the location in memory of their defining points. Our version will instead store a drawing as a mapping between object names and their data. Lines and circles can then store the symbol names of the points they depend on. As we&#8217;ll see later, these symbolic names will also be necessary when we add constraints and inheritance to the system. (The names themselves have no meaning and can be anything.)</p>
+
+<p>Here is a simple drawing:</p>
+<div class='highlight'><pre><code class='clojure'><span class='p'>(</span><span class='k'>def </span><span class='nv'>drawing</span> <span class='p'>{</span>
+  <span class='ss'>:p1</span> <span class='p'>(</span><span class='nf'>Point.</span> <span class='mi'>0</span> <span class='mi'>0</span><span class='p'>)</span>
+  <span class='ss'>:p2</span> <span class='p'>(</span><span class='nf'>Point.</span> <span class='mi'>10</span> <span class='mi'>10</span><span class='p'>)</span>
+  <span class='ss'>:l1</span> <span class='p'>(</span><span class='nf'>Line.</span> <span class='ss'>:p1</span> <span class='ss'>:p2</span><span class='p'>)</span>
+  <span class='ss'>:c1</span> <span class='p'>(</span><span class='nf'>Circle.</span> <span class='ss'>:p1</span> <span class='ss'>:p2</span><span class='p'>)</span> <span class='p'>})</span>
+</code></pre></div>
+<p>With this representation, many operations on individual lines or circles will also need access to the entire drawing&#8217;s state. This will turn out to be helpful.&lt;/p&gt;</p>
+
+<h3 id='generic_operations'>Generic operations</h3>
+
+<p>We would like to separate the mechanics of display and interaction from any knowledge about the objects themselves. We will define the needs of the interface as Clojure protocols, so that new types of geometric objects can be easily added later.</p>
+
+<p>For now, the interface will need each shape to be able to draw itself to the canvas, to report how far it is from the cursor, and to move itself by a given amount as we drag it around</p>
+
+<p>The <code>Selectable</code> protocol defines the method <code>cursor-distance</code>, which returns a simple numeric value:</p>
+<div class='highlight'><pre><code class='clojure'><span class='p'>(</span><span class='nf'>cursor-distance</span> <span class='p'>(</span><span class='nf'>Point.</span> <span class='mi'>0</span> <span class='mi'>0</span><span class='p'>)</span> <span class='p'>[</span><span class='mi'>3</span> <span class='mi'>4</span><span class='p'>])</span> <span class='c1'>; =&gt; 5</span>
+</code></pre></div>
+<p>The <code>Drawable</code> protocol defines the method <code>draw</code>, which returns nothing, but causes the shape to draw itself onto the canvas as a side-effect:</p>
+<div class='highlight'><pre><code class='clojure'><span class='p'>(</span><span class='k'>def </span><span class='nv'>point</span> <span class='p'>(</span><span class='nf'>Point.</span> <span class='mi'>1</span> <span class='mi'>1</span><span class='p'>))</span>
+<span class='p'>(</span><span class='k'>def </span><span class='nv'>drawing</span> <span class='p'>{</span><span class='ss'>:p1</span> <span class='nv'>point</span><span class='p'>})</span>
+<span class='p'>(</span><span class='nf'>draw</span> <span class='nv'>point</span> <span class='nv'>context</span> <span class='nv'>drawing</span><span class='p'>)</span> <span class='c1'>; =&gt; null, but drawn to context</span>
+</code></pre></div>
+<p>The <code>Moveable</code> protocol&#8217;s <code>move!</code> method is the most peculiar. Moving a point is simple enough, and could just return an updated version of the point. But when moving a line, we do not need to change anything about the line: it still starts and ends at points with the same names. Instead we need to move those two end-points. So <code>move!</code> returns a state patch, a map from names to updated versions of the changed objects.</p>
+<div class='highlight'><pre><code class='clojure'><span class='p'>(</span><span class='k'>def </span><span class='nv'>drawing</span> <span class='p'>{</span>
+  <span class='ss'>:p1</span> <span class='p'>(</span><span class='nf'>Point.</span> <span class='mi'>1</span> <span class='mi'>1</span><span class='p'>)</span>
+  <span class='ss'>:p2</span> <span class='p'>(</span><span class='nf'>Point.</span> <span class='mi'>2</span> <span class='mi'>2</span><span class='p'>)</span>
+  <span class='ss'>:l1</span> <span class='p'>(</span><span class='nf'>Line.</span> <span class='ss'>:p1</span> <span class='ss'>:p2</span><span class='p'>)</span> <span class='p'>})</span>
+
+<span class='p'>(</span><span class='nf'>move!</span> <span class='p'>(</span><span class='ss'>:p1</span> <span class='nv'>drawing</span><span class='p'>)</span> <span class='ss'>:p1</span> <span class='p'>[</span><span class='mi'>5</span> <span class='mi'>5</span><span class='p'>]</span> <span class='nv'>drawing</span><span class='p'>)</span>
+<span class='c1'>; =&gt; { :p1 (Point. 6 6)}</span>
+
+<span class='p'>(</span><span class='nf'>move!</span> <span class='p'>(</span><span class='ss'>:l1</span> <span class='nv'>drawing</span><span class='p'>)</span> <span class='ss'>:l1</span> <span class='p'>[</span><span class='mi'>5</span> <span class='mi'>5</span><span class='p'>]</span> <span class='nv'>drawing</span><span class='p'>)</span>
+<span class='c1'>; =&gt; { :p1 (Point. 6 6) :p2 (Point. 7 7)}</span>
+</code></pre></div>
+<h4 id='exercises'>Exercises</h4>
+
+<p>Before reading further, try out the following problems for yourself:</p>
+
+<ol>
+<li>(Easy) Implement the <code>Moveable</code> protocol for each shape.</li>
+
+<li>(Medium) Implement the <code>Selectable</code> protocol for each shape.</li>
+
+<li>(Easy if you know canvas) Implement <code>Drawable</code> using the canvas API.</li>
+</ol>
+
+<h4 id='answers'>Answers</h4>
+<div class='highlight'><pre><code class='clojure'><span class='p'>(</span><span class='kd'>defprotocol </span><span class='nv'>Moveable</span>
+  <span class='s'>&quot;Objects that can be moved by direct interaction&quot;</span>
+
+  <span class='p'>(</span><span class='nf'>move!</span> <span class='p'>[</span><span class='nv'>item</span> <span class='nb'>name </span><span class='nv'>dx</span> <span class='nv'>dy</span> <span class='nv'>universe</span><span class='p'>]</span> 
+  <span class='s'>&quot;Returns a state patch for the universe with item moved&quot;</span><span class='p'>))</span>
+
+<span class='p'>(</span><span class='nf'>extend-type</span> <span class='nv'>Point</span> 
+  <span class='nv'>Moveable</span>
+  <span class='p'>(</span><span class='nf'>move!</span> <span class='p'>[</span><span class='nv'>point</span> <span class='nb'>name </span><span class='p'>[</span><span class='nv'>dx</span> <span class='nv'>dy</span><span class='p'>]</span> <span class='nv'>layer</span><span class='p'>]</span>
+    <span class='p'>{</span><span class='nb'>name </span><span class='p'>{</span> <span class='ss'>:x</span> <span class='p'>(</span><span class='nb'>+ </span><span class='nv'>x</span> <span class='nv'>dx</span><span class='p'>)</span> <span class='ss'>:y</span> <span class='p'>(</span><span class='nb'>+ </span><span class='nv'>y</span> <span class='nv'>dy</span><span class='p'>)</span> <span class='p'>}}))</span>
+
+<span class='p'>(</span><span class='nf'>extend-type</span> <span class='nv'>Line</span>
+  <span class='nv'>Moveable</span>
+  <span class='p'>(</span><span class='nf'>move!</span> <span class='p'>[</span><span class='nv'>_</span> <span class='nb'>name </span><span class='nv'>ds</span> <span class='nv'>layer</span><span class='p'>]</span>
+    <span class='p'>(</span><span class='nb'>merge </span><span class='p'>(</span><span class='nf'>move!</span> <span class='p'>(</span><span class='nf'>p1</span> <span class='nv'>layer</span><span class='p'>)</span> <span class='nv'>p1</span> <span class='nv'>ds</span> <span class='nv'>layer</span><span class='p'>)</span>
+           <span class='p'>(</span><span class='nf'>move!</span> <span class='p'>(</span><span class='nf'>p2</span> <span class='nv'>layer</span><span class='p'>)</span> <span class='nv'>p2</span> <span class='nv'>ds</span> <span class='nv'>layer</span><span class='p'>))))</span>
+
+<span class='p'>(</span><span class='nf'>extend-type</span> <span class='nv'>Circle</span>
+  <span class='nv'>Moveable</span>
+  <span class='p'>(</span><span class='nf'>move!</span> <span class='p'>[</span><span class='nv'>_</span> <span class='nb'>name </span><span class='nv'>ds</span> <span class='nv'>layer</span><span class='p'>]</span>
+    <span class='p'>(</span><span class='nb'>merge </span><span class='p'>(</span><span class='nf'>move!</span> <span class='p'>(</span><span class='nf'>center</span> <span class='nv'>layer</span><span class='p'>)</span> <span class='nv'>center</span> <span class='nv'>ds</span> <span class='nv'>layer</span><span class='p'>)</span>
+           <span class='p'>(</span><span class='nf'>move!</span> <span class='p'>(</span><span class='nf'>p2</span> <span class='nv'>layer</span><span class='p'>)</span> <span class='nv'>p2</span> <span class='nv'>ds</span> <span class='nv'>layer</span><span class='p'>))))</span>
+</code></pre></div>
+<p><span>Answer for 2.</span></p>
+
+<p><span>Answer for 3.</span></p>
+
+<h3 id='the_interface'>The interface</h3>
+						</div>
+						
+            <div class="footer">
+              <div class="contact">
+                <p>
+                  <a href="http://adamsolove.com">Adam Solove</a><br />
+                  <a href="mailto:asolove@gmail.com">asolove@gmail.com</a>
+                </p>
+              </div>
+              <div class="contact">
+                <p>
+                  <a href="http://github.com/asolove/">github.com/asolove</a><br />
+                  <a href="http://twitter.com/asolove/">twitter.com/asolove</a><br />
+                </p>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /container -->
+
+        <script>
+          (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+          (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+          })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+          ga('create', 'UA-40894369-1', 'adamsolove.com');
+          ga('send', 'pageview');
+        </script>
+    </body>
+</html>

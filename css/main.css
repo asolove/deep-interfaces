@@ -159,6 +159,11 @@ dl.current-projects {
     color: #999;
 }
 
+.site .header nav a[href='#']:link,
+.site .header nav a[href=#]:visited {
+  color: #ccc;
+}
+
 .site .meta {
   color: #aaa;
   margin-top: 0.4em;
@@ -272,4 +277,15 @@ hr {
     background-color: transparent;
     border-color: transparent;
     border-bottom: 2px solid #eee;
+}
+
+td, th {
+  font-family: "Helvetica Neue", arial, helvetica, sans-serif;
+  vertical-align: top;
+  padding-right: 5px;
+  font-size: .85em;
+}
+
+.highlight {
+  margin: 1em 0 2em 2em;
 }

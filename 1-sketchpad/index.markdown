@@ -25,11 +25,9 @@ title: "Sketchpad"
 	to take on the value of the radius of a circle. The Sketchpad system would then
 	maintain these constraints dynamically, even as the user made manual adjustments.</p>
 	
-<p>Alan Kay's narration of one of the only surviving videos of Sketchpad in use 
-	highlights both the extremely primitive state of computer hardware used and 
-	the incredible power of its interface:</p>	
+<p>Watch Alan Kay describe Sketchpad and narrate a video of it in use:</p>	
 	
-<iframe width="640" height="480" src="http://www.youtube.com/embed/mOZqRJzE8xg" frameborder="0" allowfullscreen="allowfullscreen" style="margin-bottom:30px;">&nbsp;</iframe>
+<iframe width="550" height="400" src="http://www.youtube.com/embed/mOZqRJzE8xg" frameborder="0" allowfullscreen="allowfullscreen" style="margin-bottom:30px;">&nbsp;</iframe>
 	
 <h2>Lessons from Sketchpad</h2>
 	
@@ -53,4 +51,8 @@ title: "Sketchpad"
 
 <h2>Recreating Sketchpad</h2>
 
+<p>Our version of Sketchpad will support only a few shapes and constraint types, but will
+demonstrate the power and generality of the original. We will be drawing in the browser 
+using the canvas API and simple DOM events.</p>
 
+<p><strong>Next: <a href="/1-sketchpad/generic-operations/">Generic operations for Sketchpad's view layer</a></strong></p>
